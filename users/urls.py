@@ -1,15 +1,15 @@
 from django.urls import path
 
 from users.apps import UsersConfig
-from users.views import LoginView, LogoutView, RegisterView, UserDetailView, UserUpdateView, EmailConfirmationSentView, \
+from users.views import  RegisterView, UserDetailView, UserUpdateView, EmailConfirmationSentView, \
     UserConfirmEmailView, EmailConfirmedView, EmailConfirmationFailedView, PasswordRecoveryView, UserListView, \
-    block_user
+    block_user, LoginView, logout_user
 
 app_name = UsersConfig.name
 
 urlpatterns = [
-    path('', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('',  LoginView.as_view(), name='login'),
+    path('logout/', logout_user, name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     path('profile/', UserDetailView.as_view(), name='profile'),
     path('profile/edit/', UserUpdateView.as_view(), name='profile_edit'),

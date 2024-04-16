@@ -5,7 +5,7 @@ from users.models import User
 
 class Command(BaseCommand):
 
-    def handle(self, *args, **kwargs):
+    def handdle(self, *args, **kwargs):
         user = User.objects.create(
             email='admin@admin.ru',
             first_name='admin',
@@ -17,3 +17,4 @@ class Command(BaseCommand):
 
         user.set_password('123123123')
         user.save()
+

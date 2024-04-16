@@ -1,10 +1,12 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView as BaseLoginView, PasswordResetConfirmView, PasswordResetView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.shortcuts import render, redirect
 
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
@@ -25,9 +27,29 @@ from users.mixins import UserIsNotAuthenticated
 class LoginView(BaseLoginView):
     template_name = 'users/authenticate/login.html'
 
+# def login_user(request):
+#        if request.method == "POST":
+#            email = request.POST['email']
+#            password = request.POST['password']
+#            user = authenticate(request, email=email, password=password)
+#            if user is not None:
+#                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+#                messages.success(request, "Welcome!")
+#                return redirect('mailing:index')
+#            else:
+#                messages.success(request, "There Was An Error Logging In, Try Again...")
+#                return redirect('users:login')
+#
+#        else:
+#            return render(request, 'users/authenticate/login.html', {})
+#
 
-class LogoutView(BaseLogoutView):
-    pass
+def logout_user(request):
+    logout(request)
+    messages.success(request, ("You Were Logged Out!"))
+    return redirect('mailing:index')
+
+
 
 
 class RegisterView(UserIsNotAuthenticated, CreateView):
@@ -39,16 +61,6 @@ class RegisterView(UserIsNotAuthenticated, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Регистрация на сайте'
         return context
-
-    # def form_valid(self, form):
-    #     new_user = form.save()
-    #     send_mail(
-    #         subject='Подтверждение почты',
-    #         message='123',
-    #         from_email=settings.EMAIL_HOST_USER,
-    #         recipient_list=[new_user.email]
-    #     )
-    #     return super().form_valid(form)
 
     def form_valid(self, form):
         user = form.save(commit=False)
