@@ -1,0 +1,42 @@
+{% extends 'mailing/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3>Пользователи</h3>
+    </div>
+
+    <div class="table-responsive small">
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Email</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Возможности</th>
+            </tr>
+            </thead>
+
+            {% for object in object_list %}
+
+                <tr>
+                    <td>{{ object.email }}</td>
+                    <td>{{ object.first_name }}</td>
+                    <td>{{ object.last_name }}</td>
+
+                    <td>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            {% if object.is_active %}
+                                <a type="button" class="btn btn-danger form-control"
+                                   href="{% url 'users:block_user' object.pk %}">Заблокировать</a>
+                            {% else %}
+                                <a type="button" class="btn btn-success form-control"
+                                   href="{% url 'users:block_user' object.pk %}">Разблокировать</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

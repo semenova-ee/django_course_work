@@ -1,0 +1,57 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="row g-0">
+            <div class="card-header">
+                <p><h4 class="card-title"><strong>Детали лога рассылки</strong></h4></p>
+            </div>
+            <div class="col">
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <dl class="row">
+                            <dt class="col-sm-2">Последняя попытка</dt>
+                            <dd class="col-sm-10">{{ object.date_of_last_attempt|date:"d M Y H:i:s" }}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">Статус попытки</dt>
+                            <dd class="col-sm-10">
+                                {% if object.status_of_last_attempt %}
+                                    Success
+                                {% else %}
+                                    Fail
+                                {% endif %}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">Ответ сервера</dt>
+                            <dd class="col-sm-10">{{ object.server_response }}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">Периодичность</dt>
+                            <dd class="col-sm-10">{{ object.schedule.get_periodic_display }}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">Тема сообщения</dt>
+                            <dd class="col-sm-10">{{ object.schedule.message.title }}</dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">Текст сообщения</dt>
+                            <dd class="col-sm-10">{{ object.schedule.message.text|linebreaksbr }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a class="btn btn-outline-secondary btn-sm" href="{% url 'mailing:mailing_logs' %}">All
+                            Mailing Logs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

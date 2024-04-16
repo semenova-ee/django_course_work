@@ -1,0 +1,53 @@
+{% extends 'mailing/base.html' %}
+
+{% block content %}
+
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3>Reports</h3>
+    </div>
+
+    <div class="table-responsive small">
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Ответ сервера</th>
+                <th>Периодичность рассылки</th>
+                <th>Тема сообщения</th>
+                <th>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">Action</div>
+                </th>
+            </tr>
+            </thead>
+
+            {% for object in object_list %}
+                <tr>
+                    <td>{{ object.date_of_last_attempt|date:"d M Y H:i" }}</td>
+                    <td>
+                        {% if object.status_of_last_attempt %}
+                            <span class="badge rounded-pill text-bg-success">✓</span>
+                        {% else %}
+                            <span class="badge rounded-pill text-bg-danger">✕</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ object.server_response|truncatechars:50 }}</td>
+                    <td>{{ object.schedule.get_periodic_display }}</td>
+                    <td>{{ object.schedule.message.title|truncatechars:30 }}</td>
+
+                    <td>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a type="button" class="btn" href="{% url 'mailing:mailing_log_view' object.pk %}"
+                               style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                View
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+{% endblock %}

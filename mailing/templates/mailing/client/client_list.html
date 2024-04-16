@@ -1,0 +1,68 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h3>Пользователи</h3>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a type="button" class="btn btn-sm btn-secondary" href="{% url 'mailing:client_create' %}">Add
+                new</a>
+        </div>
+    </div>
+
+    <div class="table-responsive small">
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>E-mail</th>
+                {% if request.user.is_superuser %}
+                    <th>Создал</th>
+                {% endif %}
+                <th>Можно отправить</th>
+            </tr>
+            </thead>
+            {% for object in object_list %}
+                <tr>
+
+                    <td>{{ object.name }}</td>
+                    <td>{{ object.surname }}</td>
+                    <td>{{ object.patronymic }}</td>
+                    <td>{{ object.email }}
+                    </td>
+                    {% if request.user.is_superuser %}
+                        <td>{{ object.owner }}</td>
+                    {% endif %}
+                    <td>
+                        {% if object.is_active %}
+                            <span class="badge rounded-pill text-success">✓</span>
+                        {% else %}
+                            <span class="badge rounded-pill text-danger">✕</span>
+                        {% endif %}
+                    </td>
+
+
+                    <td>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a type="button" class="btn" href="{% url 'mailing:client_detail' object.pk %}"
+                               style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                View
+                            </a>
+                            <a type="button" class="btn" href="{% url 'mailing:client_update' object.pk %}"
+                               style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                Edit
+                            </a>
+                            <a type="button" class="btn" href="{% url 'mailing:client_delete' object.pk %}"
+                               style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+{% endblock %}
