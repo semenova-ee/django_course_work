@@ -24,8 +24,7 @@
             </style>
             <div class="card-footer">
                 <div class="d-flex justify-content-between align-items-center">
-                    <small>Создано: <strong>{{ object.created_at|date:"d M Y H:i:s" }}</strong>, Обновлено:
-                        <strong>{{ object.modified_date|date:"d M Y H:i:s" }}</strong></small>
+                    <small>Создано: <strong>{{ object.created_at|date:"d M Y H:i:s" }}</strong>
                     <div class="btn-group">
                         <a class="btn btn-sm btn-outline-primary"
                            href="{% url 'mailing:message_update' object.pk %}">Edit</a>

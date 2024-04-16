@@ -1,76 +1,88 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import BlogPost
-from .forms import BlogPostForm
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from pytils.translit import slugify
+
+from blog.models import Blog
 
 
-class BlogPostListView(ListView):
-    model = BlogPost
-    template_name = 'blog/post_list.html'
-    context_object_name = 'posts'
+class BlogCreateView(PermissionRequiredMixin, CreateView):
+    model = Blog
+    fields = ('title', 'text', 'image', 'is_published')
+    permission_required = 'blog.add_blog'
+
+    def form_valid(self, form):
+        if form.is_valid():
+            new_blog = form.save()
+            new_blog.slug = slugify(new_blog.title)
+            new_blog.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['title'] = 'Добавление новости'
+        return context_data
+
+    def get_success_url(self):
+        return reverse_lazy('blog:list')
+
+
+class BlogListView(ListView):
+    model = Blog
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data['title'] = 'Новости'
         return context_data
 
-    def get_queryset(self):
-        return BlogPost.objects.filter(is_published=True)
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset
 
 
-class BlogPostDetailView(DetailView):
-    model = BlogPost
-    template_name = 'blog/post_detail.html'
-    context_object_name = 'post'
-    slug_url_kwarg = 'slug'
-
-    def get(self, request, *args, **kwargs):
-        # Increment views count
-        post = get_object_or_404(BlogPost, slug=self.kwargs['slug'])
-        post.views += 1
-        post.save()
-        return super().get(request, *args, **kwargs)
-
-
-
-class BlogPostCreateView(CreateView):
-    model = BlogPost
-    template_name = 'blog/post_form.html'
-    form_class = BlogPostForm
-    success_url = reverse_lazy('blog:post_list')
-
-
-class BlogPostUpdateView(UpdateView):
-    model = BlogPost
-    template_name = 'blog/post_form.html'
-    form_class = BlogPostForm
-    slug_url_kwarg = 'slug'
-
-    def get_success_url(self):
-        return reverse_lazy('blog:post_detail', kwargs={'slug': self.object.slug})
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        return HttpResponseRedirect(self.get_success_url())
-
-
-class BlogPostDeleteView(DeleteView):
-    model = BlogPost
-    template_name = 'blog/post_confirm_delete.html'
-    slug_url_kwarg = 'slug'
-    success_url = reverse_lazy('blog:post_list')
+class BlogDetailView(DetailView):
+    """Контроллер просмотра отдельной новости"""
+    model = Blog
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['post'] = self.object
+        context_data = super().get_context_data(**kwargs)
+        context_data['title'] = self.object.title
+        return context_data
 
-        # Check the HTTP_REFERER to determine if the request came from post_detail
-        referer = self.request.META.get('HTTP_REFERER', '')
-        referer = referer.split("/")
-        if referer[-2] != 'blog':
-            context['cancel_url'] = reverse('blog:post_detail', kwargs={'slug': self.object.slug})
-        else:
-            context['cancel_url'] = reverse('blog:post_list')
-        return context
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        self.object.views_count += 1
+        self.object.save()
+        return self.object
+
+
+class BlogUpdateView(PermissionRequiredMixin, UpdateView):
+    model = Blog
+    fields = ('title', 'text', 'image', 'is_published')
+    permission_required = 'blog.change_blog'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['title'] = 'Редактирование новости'
+        return context_data
+
+    def form_valid(self, form):
+        if form.is_valid():
+            new_blog = form.save()
+            new_blog.slug = slugify(new_blog.title)
+            new_blog.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('blog:list')
+
+
+class BlogDeleteView(PermissionRequiredMixin, DeleteView):
+    model = Blog
+    success_url = reverse_lazy('blog:list')
+    permission_required = 'blog.delete_blog'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['title'] = 'Удаление новости'
+        return context_data

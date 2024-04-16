@@ -9,7 +9,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView,
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 
-from blog.models import BlogPost
+from blog.models import Blog
 from mailing.forms import MailingForm, ClientForm, MessageForm
 from mailing.models import Client, Mailing, Message, MailingLog
 
@@ -25,7 +25,7 @@ class IndexView(TemplateView):
         context_data['active_mailings_count'] = active_mailings_count
         unique_clients_count = Client.objects.filter(is_active=True).distinct().count()
         context_data['unique_clients_count'] = unique_clients_count
-        all_posts = list(BlogPost.objects.filter(is_published=True))
+        all_posts = list(Blog.objects.filter(is_published=True))
         context_data['random_blog_posts'] = sample(all_posts, min(3, len(all_posts)))
         return context_data
 
@@ -52,6 +52,9 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     template_name = 'mailing/client/client_form.html'
     form_client = ClientForm
     success_url = reverse_lazy('mailing:clients')
+    fields = ('name', 'surname', 'email', 'is_active', 'comment')
+
+
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -67,9 +70,11 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
-    template_name = 'mailing/client/client_update.html'
+    template_name = 'mailing/client/client_form.html'
     form_client = ClientForm
     success_url = reverse_lazy('mailing:clients')
+    fields = ('name', 'surname', 'email', 'is_active', 'comment')
+
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -153,7 +158,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
 
 class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
-    template_name = 'mailing/message/message_update.html'
+    template_name = 'mailing/message/message_form.html'
     form_class = MessageForm
     success_url = reverse_lazy('mailing:messages')
 
@@ -235,12 +240,12 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
-    template_name = 'mailing/mailing_info/mailing_update.html'
+    template_name = 'mailing/mailing_info/mailing_form.html'
     success_url = reverse_lazy('mailing:mailings')
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['title'] = f'Редактирование {self.object.description}'
+        context_data['title'] = f'Редактирование {self.object.message}'
         return context_data
 
     def get_object(self, queryset=None):
@@ -274,7 +279,7 @@ class MailingDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['title'] = self.object.description
+        context_data['title'] = self.object.message
 
         schedule_item = Mailing.objects.get(pk=self.kwargs.get('pk'))
         user_item = Client.objects.filter(is_active=True)

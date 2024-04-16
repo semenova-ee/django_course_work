@@ -53,8 +53,7 @@
                     <a class="btn btn-outline-danger btn-sm"
                        href="{% url 'mailing:mailing_delete' object.pk %}">Delete</a>
                 </div>
-                <small>Created at: <strong>{{ object.created_at|date:"d M Y H:i" }}</strong>, Modified at:
-                    <strong>{{ object.modified_date|date:"d M Y H:i" }}</strong></small>
+                <small>Created at: <strong>{{ object.created_at|date:"d M Y H:i" }}</strong>
             </div>
         </div>
     </div>

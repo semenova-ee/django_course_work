@@ -1,7 +1,7 @@
 from django.urls import path
 
-from members.apps import UsersConfig
-from members.views import LoginView, LogoutView, RegisterView, UserDetailView, UserUpdateView, EmailConfirmationSentView, \
+from users.apps import UsersConfig
+from users.views import LoginView, LogoutView, RegisterView, UserDetailView, UserUpdateView, EmailConfirmationSentView, \
     UserConfirmEmailView, EmailConfirmedView, EmailConfirmationFailedView, PasswordRecoveryView, UserListView, \
     block_user
 

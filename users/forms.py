@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
-from members.models import User
+from users.models import User
 
 
 class StyleFormMixin:
@@ -29,7 +29,7 @@ class UserRegisterForm(StyleFormMixin, UserCreationForm):
 class UserForm(StyleFormMixin, UserChangeForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'password', 'country', 'phone', 'avatar')
+        fields = ('first_name', 'last_name', 'email', 'password', 'phone')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

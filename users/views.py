@@ -17,13 +17,13 @@ from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView, TemplateView, FormView, ListView
 
 from config import settings
-from members.forms import UserRegisterForm, UserForm, PasswordRecoveryForm
-from members.models import User
-from mixins import UserIsNotAuthenticated
+from users.forms import UserRegisterForm, UserForm, PasswordRecoveryForm
+from users.models import User
+from users.mixins import UserIsNotAuthenticated
 
 
 class LoginView(BaseLoginView):
-    template_name = 'users/login.html'
+    template_name = 'users/authenticate/login.html'
 
 
 class LogoutView(BaseLogoutView):
@@ -33,7 +33,7 @@ class LogoutView(BaseLogoutView):
 class RegisterView(UserIsNotAuthenticated, CreateView):
     model = User
     form_class = UserRegisterForm
-    template_name = 'users/register.html'
+    template_name = 'users/authenticate/register_user.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,7 +52,7 @@ class RegisterView(UserIsNotAuthenticated, CreateView):
 
     def form_valid(self, form):
         user = form.save(commit=False)
-        user.is_active = False
+        user.is_active = True
         user.save()
         # Функционал для отправки письма и генерации токена
         token = default_token_generator.make_token(user)
@@ -72,6 +72,8 @@ class RegisterView(UserIsNotAuthenticated, CreateView):
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
+    template_name = 'users/user/user_detail.html'
+
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -81,6 +83,8 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
     success_url = reverse_lazy('users:profile')
     form_class = UserForm
+    template_name = 'users/user/user_form.html'
+
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -104,7 +108,7 @@ class UserConfirmEmailView(View):
 
 
 class EmailConfirmationSentView(TemplateView):
-    template_name = 'users/email_confirmation_sent.html'
+    template_name = 'users/email/email_confirmed.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -113,7 +117,7 @@ class EmailConfirmationSentView(TemplateView):
 
 
 class EmailConfirmedView(TemplateView):
-    template_name = 'users/email_confirmed.html'
+    template_name = 'users/email/email_confirmed.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -122,7 +126,7 @@ class EmailConfirmedView(TemplateView):
 
 
 class EmailConfirmationFailedView(TemplateView):
-    template_name = 'users/email_confirmation_failed.html'
+    template_name = 'users/email/email_confirmation_failed.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -131,7 +135,7 @@ class EmailConfirmationFailedView(TemplateView):
 
 
 class PasswordRecoveryView(FormView):
-    template_name = 'users/password_recovery.html'
+    template_name = 'users/pass/password_recovery.html'
     form_class = PasswordRecoveryForm
     success_url = reverse_lazy('users:login')
 

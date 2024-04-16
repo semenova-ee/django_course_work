@@ -1,0 +1,66 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+
+{% block content %}
+
+
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Новости</h1>
+    </div>
+
+    <div class="container">
+        {% if request.user|has_group:1 %}
+            <a class="btn btn-outline-dark mb-4" href="{% url 'blog:create' %}">Добавить новость</a>
+        {% endif %}
+        <div class="row text-center">
+            {% for object in object_list %}
+                {% if object.is_published %}
+                    <div class="col-4">
+                        <div class="card mb-4 box-shadow">
+                            <img class="rounded form-control"
+                                 style='width: 300px;height: 300px;overflow: hidden;margin: 20px; object-fit: contain'
+                                 alt="Image"
+                                 onerror="this.src='https://img.razrisyika.ru/img/173/1200/689342-blestyaschaya-raskraska-novosti-stranicy.jpg'"
+                                 src="{% mediapath object.image %}"/>
+                            <div class="card-body">
+                                <h3 class="card-title pricing-card-title">{{ object }}</h3>
+                                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                                    <p>{{ object.text|truncatechars:100 }}</p>
+                                </ul>
+                                <a href="{% url 'blog:view' object.pk %}" type="button"
+                                   class="btn btn-primary btn-block btn-outline-dark mt-auto">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% if perms.blog.change_blog or request.user.is_superuser %}
+            <div class="row text-center">
+                <h2>Не опубликовано</h2>
+                {% for object in object_list %}
+                    {% if not object.is_published %}
+                        <div class="col-4">
+                            <div class="card mb-4 box-shadow">
+                                <img class="rounded form-control"
+                                     style='width: 300px;height: 300px;overflow: hidden;margin: 20px; object-fit: contain'
+                                     alt="Image"
+                                     onerror="this.src='https://img.razrisyika.ru/img/173/1200/689342-blestyaschaya-raskraska-novosti-stranicy.jpg'"
+                                     src="{% mediapath object.image %}"/>
+                                <div class="card-body">
+                                    <h3 class="card-title pricing-card-title">{{ object }}</h3>
+                                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                                        <p>{{ object.text|truncatechars:100 }}</p>
+                                    </ul>
+                                    <a href="{% url 'blog:view' object.pk %}" type="button"
+                                       class="btn btn-primary btn-block btn-outline-dark mt-auto">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div>
+
+{% endblock %}

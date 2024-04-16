@@ -36,14 +36,14 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
         text = self.cleaned_data.get('text', '')
         for word in forbidden_words:
             if word in text.lower():
-                raise forms.ValidationError(f"The word '{word}' is not allowed in the product description.")
+                raise forms.ValidationError(f"The word '{word}' is not allowed in the message description.")
         return text
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
 
     class Meta():
         model = Mailing
-        fields =['start_date', 'interval', 'status']
+        exclude = ['created_at', 'is_active', 'status', 'owner']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,5 +1,5 @@
 from django import forms
-from .models import BlogPost
+from .models import Blog
 
 class BlogPostForm(forms.ModelForm):
     class Meta:

@@ -2,21 +2,22 @@ from datetime import datetime
 
 from django.db import models
 
-from members.models import User
+from users.models import User
 
 NULLABLE = {'blank': True, 'null': True}
 
 
 class Client(models.Model):
-    first_name = models.CharField(max_length=100, verbose_name='Имя')
-    last_name = models.CharField(max_length=100, verbose_name='Фамилия')
+    surname = models.CharField(max_length=100, verbose_name='Фамилия')
+    name = models.CharField(max_length=100, verbose_name='Имя')
     email = models.EmailField(max_length=254, unique=True, verbose_name='Электронная почта')
     comment = models.TextField(verbose_name='Комментарий', **NULLABLE)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     is_active = models.BooleanField(default=True, verbose_name='Активность')
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Владелец')
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name} - {self.email}'
+        return f'{self.surname} {self.name} - {self.email}'
 
     class Meta:
         verbose_name = 'Клиент'
@@ -60,8 +61,7 @@ class Mailing(models.Model):
     status = models.PositiveSmallIntegerField(choices=STATUS_CHOICES, null=True)
     message = models.OneToOneField(Message, on_delete=models.CASCADE,verbose_name='Сообщение', null=True)
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
-    modified_date = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
-    next_try = models.DateTimeField(verbose_name='Попытка следующей отправки', **NULLABLE)
+    time = models.TimeField(verbose_name='Время начала')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -80,9 +80,4 @@ class MailingLog(models.Model):
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name='Владелец', **NULLABLE)
 
     def __str__(self):
-        return f'{self.schedule.description}: {self.time} - {self.status}'
-
-    class Meta:
-        verbose_name = 'Логи рассылки'
-        verbose_name_plural = 'Логи рассылок'
-        ordering = ('-date_of_last_attempt',)
+        return f'{self.schedule.title}: {self.time} - {self.status}'
