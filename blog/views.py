@@ -14,7 +14,7 @@ class BlogCreateView(CreateView):
     template_name = 'blog/blog_form.html'
     form_class = BlogForm
     success_url = reverse_lazy('blog:list')
-    fields = ['title', 'text', 'image', 'is_published']
+    # fields = ['title', 'text', 'image', 'is_published']
 
     def form_valid(self, form):
         if form.is_valid():
