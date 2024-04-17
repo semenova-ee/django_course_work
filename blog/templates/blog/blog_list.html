@@ -9,8 +9,8 @@
     </div>
 
     <div class="container">
-        {% if request.user|has_group:1%}
-            <a class="btn btn-outline-dark mb-4" href="{% url 'blog:create' %}">Добавить новость</a>
+        {% if perms.blog.change_blog or request.user.is_superuser%}
+            <a class="btn btn-outline-dark mb-4" href="{% url 'blog:create' %}">Добавить статью в блоге</a>
         {% endif %}
         <div class="row text-center">
             {% for object in object_list %}

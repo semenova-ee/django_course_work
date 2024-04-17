@@ -9,6 +9,26 @@ from blog.forms import BlogForm
 from blog.models import Blog
 
 
+class BlogCreateView(CreateView):
+    model = Blog
+    template_name = 'blog/blog_form.html'
+    form_class = BlogForm
+    success_url = reverse_lazy('blog:list')
+    fields = ['title', 'text', 'image', 'is_published']
+
+    def form_valid(self, form):
+        if form.is_valid():
+            new_blog = form.save()
+            new_blog.slug = slugify(new_blog.title)
+            new_blog.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['title'] = 'Добавление статьи'
+        return context_data
+
+
 class BlogListView(ListView):
     model = Blog
     template_name = 'blog/blog_list.html'
@@ -27,25 +47,26 @@ class BlogListView(ListView):
         return queryset
 
 
-class BlogCreateView(PermissionRequiredMixin, CreateView):
-    model = Blog
-    fields = ('title', 'text', 'image', 'is_published')
-    template_name = 'blog/blog_form.html'
-    # form_class = BlogForm
-    permission_required = 'blog.add_blog'
-    success_url = reverse_lazy('blog:list')
 
-    def form_valid(self, form):
-        if form.is_valid():
-            new_blog = form.save()
-            new_blog.slug = slugify(new_blog.title)
-            new_blog.save()
-        return super().form_valid(form)
+# class BlogCreateView(PermissionRequiredMixin, CreateView):
+#     model = Blog
+#     fields = ('title', 'text', 'image', 'is_published')
+#     template_name = 'blog/blog_form.html'
+#     # form_class = BlogForm
+#     permission_required = 'blog.add_blog'
+#     success_url = reverse_lazy('blog:list')
 
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        context_data['title'] = 'Добавление новости'
-        return context_data
+    # def form_valid(self, form):
+    #     if form.is_valid():
+    #         new_blog = form.save()
+    #         new_blog.slug = slugify(new_blog.title)
+    #         new_blog.save()
+    #     return super().form_valid(form)
+    #
+    # def get_context_data(self, **kwargs):
+    #     context_data = super().get_context_data(**kwargs)
+    #     context_data['title'] = 'Добавление новости'
+    #     return context_data
 
 
 class BlogDetailView(DetailView):
