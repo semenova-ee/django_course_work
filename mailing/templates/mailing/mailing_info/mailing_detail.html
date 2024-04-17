@@ -38,16 +38,7 @@
         <div class="card-footer">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                    <a class="btn btn-outline-secondary btn-sm"
-                       href="{% url 'mailing:toggle_run_pause' object.pk %}">
-                        {% if object.is_active and object.status != 4 %}
-                            {% if object.status == 5 %}
-                                Run
-                            {% else %}
-                                Pause
-                            {% endif %}
-                        {% endif %}
-                    </a>
+
                     <a class="btn btn-outline-primary btn-sm"
                        href="{% url 'mailing:mailing_update' object.pk %}">Edit</a>
                     <a class="btn btn-outline-danger btn-sm"

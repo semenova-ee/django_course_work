@@ -4,7 +4,7 @@ from mailing.apps import DjangoCourseWorkConfig
 from mailing.views import IndexView, ClientDetailView, ClientCreateView, ClientDeleteView, ClientUpdateView, \
     ClientListView, MessageCreateView, MessageListView, MessageUpdateView, MessageDeleteView, MessageDetailView, \
     MailingListView, \
-    MailingCreateView, MailingUpdateView, MailingDeleteView, MailingDetailView, toggle_active, toggle_run_pause, \
+    MailingCreateView, MailingUpdateView, MailingDeleteView, MailingDetailView, toggle_active, \
     MailingLogListView, MailingLogDetailView
 
 app_name = DjangoCourseWorkConfig.name
@@ -29,7 +29,7 @@ urlpatterns = [
     path('mailings/delete/<int:pk>', MailingDeleteView.as_view(), name='mailing_delete'),
     path('mailings/detail/<int:pk>', MailingDetailView.as_view(), name='mailing_detail'),
     path('mailings/toggle_active/<int:pk>', toggle_active, name='toggle_active'),
-    path('mailings/toggle_run_pause/<int:pk>', toggle_run_pause, name='toggle_run_pause'),
+    # path('mailings/toggle_run_pause/<int:pk>', toggle_run_pause, name='toggle_run_pause'),
 
     path('mailing_logs/', MailingLogListView.as_view(), name='mailing_logs'),
     path('mailing_logs/view/<int:pk>', MailingLogDetailView.as_view(), name='mailinglog_view'),

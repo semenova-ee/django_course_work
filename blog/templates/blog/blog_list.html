@@ -5,11 +5,11 @@
 
 
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4">Новости</h1>
+        <h1 class="display-4">Mailing Service - Blog</h1>
     </div>
 
     <div class="container">
-        {% if request.user|has_group:1 %}
+        {% if request.user|has_group:1%}
             <a class="btn btn-outline-dark mb-4" href="{% url 'blog:create' %}">Добавить новость</a>
         {% endif %}
         <div class="row text-center">
@@ -20,7 +20,7 @@
                             <img class="rounded form-control"
                                  style='width: 300px;height: 300px;overflow: hidden;margin: 20px; object-fit: contain'
                                  alt="Image"
-                                 onerror="this.src='https://img.razrisyika.ru/img/173/1200/689342-blestyaschaya-raskraska-novosti-stranicy.jpg'"
+                                 onerror="this.src='https://img.freepik.com/premium-vector/new-post-monochrome-banner-icon-emblem-doodle-style-design-element-social-media-hand-writing-lettering-vlog-stories-black-white-notification-isolated-vector-illustration_87771-14881.jpg?w=360'"
                                  src="{% mediapath object.image %}"/>
                             <div class="card-body">
                                 <h3 class="card-title pricing-card-title">{{ object }}</h3>
@@ -45,7 +45,7 @@
                                 <img class="rounded form-control"
                                      style='width: 300px;height: 300px;overflow: hidden;margin: 20px; object-fit: contain'
                                      alt="Image"
-                                     onerror="this.src='https://img.razrisyika.ru/img/173/1200/689342-blestyaschaya-raskraska-novosti-stranicy.jpg'"
+                                     onerror="this.src='https://img.freepik.com/premium-vector/new-post-monochrome-banner-icon-emblem-doodle-style-design-element-social-media-hand-writing-lettering-vlog-stories-black-white-notification-isolated-vector-illustration_87771-14881.jpg?w=360'"
                                      src="{% mediapath object.image %}"/>
                                 <div class="card-body">
                                     <h3 class="card-title pricing-card-title">{{ object }}</h3>
@@ -61,6 +61,6 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <div>
+    </div>
 
 {% endblock %}

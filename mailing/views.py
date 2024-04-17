@@ -308,19 +308,6 @@ def toggle_active(request, pk):
     return redirect(reverse('mailing:mailings'))
 
 
-@login_required
-def toggle_run_pause(request, pk):
-    schedule = Mailing.objects.get(pk=pk)
-    # Переключаем статус running/pause, если только рассылка не завершена
-    if schedule.status != 4:
-        schedule.status = {schedule.status == 5: 1,
-                           schedule.status == 1 or schedule.status == 3: 5}[True]
-        schedule.save()
-    else:
-        messages.error(request, 'You cannot run/pause completed schedule')
-    return redirect(reverse('mailing:mailings'))
-
-
 class MailingLogListView(LoginRequiredMixin, ListView):
     model = MailingLog
     template_name = 'mailing/mailinglog/mailinglog_list.html'

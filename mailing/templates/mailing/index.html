@@ -34,7 +34,7 @@
                     <img class="rounded"
                          style='width: 300px;height: 300px;overflow: hidden;margin: 20px; object-fit: contain'
                          alt="Image"
-                         onerror="this.src='https://img.razrisyika.ru/img/173/1200/689342-blestyaschaya-raskraska-novosti-stranicy.jpg'"
+                         onerror="this.src='https://img.freepik.com/premium-vector/new-post-monochrome-banner-icon-emblem-doodle-style-design-element-social-media-hand-writing-lettering-vlog-stories-black-white-notification-isolated-vector-illustration_87771-14881.jpg?w=360'"
                          src="{% mediapath blog.image %}"/>
                     <div class="card-body">
                         <h3 class="card-title pricing-card-title">{{ blog }}</h3>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small>Создано: <strong>{{ blog.data_created }}</strong></small>
+                            <small>Создано: <strong>{{ blog.created_at }}</strong></small>
                         </div>
                     </div>
                 </div>

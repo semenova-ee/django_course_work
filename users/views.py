@@ -174,6 +174,10 @@ class PasswordRecoveryView(FormView):
 class UserListView(PermissionRequiredMixin, ListView):
     model = User
     permission_required = 'users.view_user'
+    success_url = reverse_lazy('users:users_list')
+    template_name = 'users/user/user_list.html'
+
+
 
     def get_queryset(self, *args, **kwargs):
         if self.request.user.is_superuser:

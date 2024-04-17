@@ -192,13 +192,11 @@ LOGIN_URL = '/users/'
 
 SITE_ID = 1
 
-CACHE_ENABLED = True
-if CACHE_ENABLED:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": "redis://127.0.0.1:6379",
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379'
     }
+}
 
 ACCOUNT_AUTHENTICATION_METHOD ="email"

@@ -77,17 +77,6 @@
                                     {% endif %}
                                 {% endif %}
                             </a>
-                            {% if requset.user|has_group:2 or request.user == object.owner or request.user.is_superuser %}
-                                <a type="button" class="btn" href="{% url 'mailing:toggle_run_pause' object.pk %}"
-                                   style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .25rem; --bs-btn-font-size: .75rem;">
-                            {% endif %}
-                            {% if object.is_active and object.status != 2  and 4 %}
-                                {% if request.user == object.owner or request.user.is_superuser %}
-                                    {% if object.status == 5 %}
-                                        Начать
-                                    {% else %}
-                                        Остановить
-                                    {% endif %}
                                     </a>
                                     <a type="button" class="btn"
                                        href="{% url 'mailing:mailing_detail' object.pk %}"
@@ -104,8 +93,7 @@
                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .25rem; --bs-btn-font-size: .75rem;">
                                         Delete
                                     </a>
-                                {% endif %}
-                            {% endif %}
+
                         </div>
                     </td>
                 </tr>
