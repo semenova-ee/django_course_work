@@ -6,14 +6,17 @@ from django.contrib.auth.views import LoginView as BaseLoginView, PasswordResetC
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 
 from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.shortcuts import redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
 from django.utils.crypto import get_random_string
-from django.utils.encoding import force_bytes
+from django.utils.encoding import force_bytes, force_str
+from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView, TemplateView, FormView, ListView
@@ -22,6 +25,10 @@ from config import settings
 from users.forms import UserRegisterForm, UserForm, PasswordRecoveryForm
 from users.models import User
 from users.mixins import UserIsNotAuthenticated
+
+import logging
+
+logger = logging.getLogger('users')
 
 
 class LoginView(BaseLoginView):
@@ -62,9 +69,10 @@ class RegisterView(UserIsNotAuthenticated, CreateView):
         context['title'] = 'Регистрация на сайте'
         return context
 
+
     def form_valid(self, form):
         user = form.save(commit=False)
-        user.is_active = True
+        user.is_active = False
         user.save()
         # Функционал для отправки письма и генерации токена
         token = default_token_generator.make_token(user)
@@ -78,9 +86,28 @@ class RegisterView(UserIsNotAuthenticated, CreateView):
             [user.email],
             fail_silently=False,
         )
-        print(f'Email sent {user.email}')
+
         return redirect('users:email_confirmation_sent')
 
+def verify_email(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+
+        logger.debug(f'Verifying email for user: {user.username}')
+
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)  # Вход пользователя после активации
+            messages.success(request, 'Почта подтверждена, вы вошли в систему.')
+            return redirect('users:profile')  # Перенаправить на страницу профиля
+        else:
+            messages.error(request, 'Ссылка для подтверждения почты недействительна.')
+            return redirect('users:login')  # Перенаправить на страницу входа
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    return redirect('users:login')
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
